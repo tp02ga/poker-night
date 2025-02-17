@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  name      String
+  games     Game[]  @relation("UserGames")
+  attendees Attendee[]
+
+  @@map("users") // Java = @Table("users")
+}
+
+model Game {
+  id          Int      @id @default(autoincrement())
+  hostId      Int
+  host        User     @relation("UserGames", fields: [hostId], references: [id])
+  dateTime    DateTime
+  maxPlayers  Int
+  address     String
+  attendees   Attendee[]
+  createdAt   DateTime @default(now())
+
+  @@map("games") // Java = @Table("games")
+}
+
+model Attendee {
+  id         Int      @id @default(autoincrement())
+  gameId     Int
+  userId     Int
+  game       Game     @relation(fields: [gameId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  waitlist   Boolean  @default(false)
+  signedUpAt DateTime @default(now())
+
+  @@unique([gameId, userId])
+
+  @@map("attendees") // Java = @Table("attendees")
+}
+
