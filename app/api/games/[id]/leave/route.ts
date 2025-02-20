@@ -1,11 +1,9 @@
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserIdFromToken } from "@/lib/auth";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const gameId = Number.parseInt(params.id);
@@ -36,6 +34,8 @@ export async function POST(
         signedUpAt: "asc",
       },
     });
+
+    // TODO: send notification that waitlisted user has been promoted
 
     // If there's someone on the waitlist, promote them
     if (nextWaitlisted) {
