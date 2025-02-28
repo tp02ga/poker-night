@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import Image from "next/image";
 
-export default function Home() {
+export default function Home({ children }: { children: React.ReactNode }) {
   const isLoggedIn = cookies().has("token");
 
   return (

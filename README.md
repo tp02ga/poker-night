@@ -11,7 +11,7 @@ This application supports Google OAuth authentication. Here's how it's configure
 1. Google Cloud Platform account with OAuth credentials:
 
    - Client ID: YOUR_CLIENT_ID_PLACEHOLDER
-   - Client Secret: YOUR_CLIENT_SECRET_PLACEHOLDER
+   - Client Secret: ?????
 
 2. Environment variables:
    - `JWT_SECRET`: Secret key for signing JWT tokens

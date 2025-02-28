@@ -75,7 +75,6 @@ export default function Login() {
         {/* Google Sign-in Button */}
         <Button
           type="button"
-          variant="outline"
           className="w-full mb-4 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100"
           onClick={handleGoogleSignIn}
         >

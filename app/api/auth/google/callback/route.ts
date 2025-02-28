@@ -5,9 +5,8 @@ import { sign } from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 // Google OAuth configuration
-const GOOGLE_CLIENT_ID =
-  "YOUR_CLIENT_ID_PLACEHOLDER";
-const GOOGLE_CLIENT_SECRET = "YOUR_CLIENT_SECRET_PLACEHOLDER";
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = `${
   process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 }/api/auth/google/callback`;
