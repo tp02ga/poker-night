@@ -1,34 +1,35 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useAppDispatch } from "@/redux/hooks";
+import { logout } from "@/redux/features/userSlice";
 
-export const LogoutButton = () => {
+export function LogoutButton() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
 
-      router.push("/");
-      router.refresh(); // This forces a refresh of server components
+      if (response.ok) {
+        // Dispatch logout action to update Redux state
+        dispatch(logout());
+        router.push("/login");
+      }
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error("Logout error:", error);
     }
   };
 
   return (
-    <Button
+    <button
       onClick={handleLogout}
-      variant="ghost"
-      className="text-red-500 hover:text-red-700 hover:bg-red-100/10"
+      className="text-white hover:text-yellow-400 transition-colors"
     >
       Logout
-    </Button>
+    </button>
   );
-};
+}

@@ -10,12 +10,34 @@ datasource db {
 model User {
   id        Int     @id @default(autoincrement())
   email     String  @unique
-  password  String
+  password  String?
   name      String
   games     Game[]  @relation("UserGames")
   attendees Attendee[]
+  accounts  Account[]
+  image     String?
 
   @@map("users") // Java = @Table("users")
+}
+
+model Account {
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Game {

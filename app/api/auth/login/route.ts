@@ -1,53 +1,70 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import prisma from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import { compare } from "bcrypt";
+import { sign } from "jsonwebtoken";
 
-export async function POST(request: Request) {
-  const { email, password } = await request.json();
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
 
-  if (!email || !password) {
-    return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
-    );
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
+    const { email, password } = await request.json();
+
+    // Validate input
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
+        { error: "Email and password are required" },
+        { status: 400 }
       );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: "1d",
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
     });
 
-    const response = NextResponse.json(
-      { message: "Login successful" },
-      { status: 200 }
-    );
-    response.cookies.set("token", token, {
+    // Check if user exists and has a password (might not if they only use OAuth)
+    if (!user || !user.password) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    // Verify password
+    const passwordValid = await compare(password, user.password);
+
+    if (!passwordValid) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    // Create JWT token
+    const token = sign({ userId: user.id, email: user.email }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Set token as cookie and return user data
+    const response = NextResponse.json({
+      userId: user.id,
+      email: user.email,
+      username: user.name,
+    });
+
+    response.cookies.set("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
     });
 
     return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "An error occurred during login" },
       { status: 500 }
     );
   }
