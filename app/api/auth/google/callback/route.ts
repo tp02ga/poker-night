@@ -16,6 +16,15 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";
 
 export async function GET(request: NextRequest) {
   try {
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+      console.error("Missing Google OAuth environment variables");
+      return NextResponse.redirect(
+        `${
+          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        }/login?auth_error=OAuth configuration error`
+      );
+    }
+
     // Get the authorization code from the URL
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get("code");
@@ -40,17 +49,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Create params for token exchange
+    const params = new URLSearchParams();
+    params.append("code", code);
+    params.append("client_id", GOOGLE_CLIENT_ID);
+    params.append("client_secret", GOOGLE_CLIENT_SECRET);
+    params.append("redirect_uri", REDIRECT_URI);
+    params.append("grant_type", "authorization_code");
+
     // Exchange the code for an access token
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        code,
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
-        grant_type: "authorization_code",
-      }),
+      body: params,
     });
 
     if (!tokenResponse.ok) {

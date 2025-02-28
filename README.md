@@ -10,10 +10,12 @@ This application supports Google OAuth authentication. Here's how it's configure
 
 1. Google Cloud Platform account with OAuth credentials:
 
-   - Client ID: YOUR_CLIENT_ID_PLACEHOLDER
-   - Client Secret: ?????
+   - Client ID: [Your Google OAuth Client ID]
+   - Client Secret: [Your Google OAuth Client Secret]
 
 2. Environment variables:
+   - `GOOGLE_CLIENT_ID`: Your Google OAuth Client ID
+   - `GOOGLE_CLIENT_SECRET`: Your Google OAuth Client Secret
    - `JWT_SECRET`: Secret key for signing JWT tokens
    - `NEXT_PUBLIC_APP_URL`: Your application's URL (defaults to http://localhost:3000 in development)
    - `DATABASE_URL`: MySQL database connection string
@@ -26,13 +28,22 @@ This application supports Google OAuth authentication. Here's how it's configure
    npm install
    ```
 
-2. Run Prisma migrations to update your database schema:
+2. Create a `.env.local` file in the root directory with the following variables:
+
+   ```
+   GOOGLE_CLIENT_ID=your_client_id_here
+   GOOGLE_CLIENT_SECRET=your_client_secret_here
+   JWT_SECRET=your_jwt_secret_here
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+
+3. Run Prisma migrations to update your database schema:
 
    ```bash
    npx prisma migrate dev --name add-google-auth
    ```
 
-3. Start the development server:
+4. Start the development server:
    ```bash
    npm run dev
    ```

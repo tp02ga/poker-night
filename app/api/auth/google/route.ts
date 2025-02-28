@@ -3,11 +3,20 @@ import { NextResponse } from "next/server";
 // Google OAuth configuration
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
 const REDIRECT_URI = `${
   process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 }/api/auth/google/callback`;
 
 export async function GET() {
+  if (!GOOGLE_CLIENT_ID) {
+    console.error("Missing GOOGLE_CLIENT_ID environment variable");
+    return NextResponse.json(
+      { error: "OAuth configuration error" },
+      { status: 500 }
+    );
+  }
+
   // Generate a random state value for security
   const state = Math.random().toString(36).substring(2, 15);
 
