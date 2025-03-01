@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Connect to the host machine's MySQL using host.docker.internal
+      - DATABASE_URL=mysql://root:root@host.docker.internal:3306/poker_game_planner
+      - JWT_SECRET=your-super-secret-jwt-key-that-should-be-very-long-in-production
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    restart: unless-stopped
+    # Add extra_hosts for Windows/Mac to ensure host.docker.internal works
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

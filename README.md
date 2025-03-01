@@ -76,3 +76,123 @@ npm run dev
 ```
 
 The application will be available at http://localhost:3000.
+
+## Docker and AWS Deployment
+
+### Docker Setup
+
+The application is containerized using Docker for easy deployment. Here's how to use it:
+
+#### Local Development with Docker
+
+1. Build and start the containers:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+2. The application will be available at http://localhost:3000
+
+3. To stop the containers:
+
+   ```bash
+   docker-compose down
+   ```
+
+#### Building the Docker Image
+
+To build the Docker image manually:
+
+```bash
+docker build -t poker-night-app .
+```
+
+### AWS Deployment
+
+This application can be deployed to AWS using various services. Here's a recommended approach:
+
+#### Option 1: AWS Elastic Beanstalk
+
+1. Install the AWS CLI and EB CLI:
+
+   ```bash
+   pip install awscli awsebcli
+   ```
+
+2. Initialize your EB application:
+
+   ```bash
+   eb init
+   ```
+
+3. Create an environment and deploy:
+
+   ```bash
+   eb create
+   ```
+
+4. For subsequent deployments:
+
+   ```bash
+   eb deploy
+   ```
+
+#### Option 2: AWS ECS (Elastic Container Service)
+
+1. Create an ECR repository:
+
+   ```bash
+   aws ecr create-repository --repository-name poker-night-app
+   ```
+
+2. Authenticate Docker to your ECR registry:
+
+   ```bash
+   aws ecr get-login-password | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com
+   ```
+
+3. Tag and push your Docker image:
+
+   ```bash
+   docker tag poker-night-app:latest <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/poker-night-app:latest
+   docker push <your-aws-account-id>.dkr.ecr.<region>.amazonaws.com/poker-night-app:latest
+   ```
+
+4. Create an ECS cluster, task definition, and service using the AWS Management Console or AWS CLI.
+
+#### Database Setup on AWS
+
+For the database, consider using:
+
+1. **Amazon RDS for MySQL**:
+
+   - Create a MySQL instance in RDS
+   - Update the `DATABASE_URL` environment variable to point to your RDS instance
+   - Ensure the security group allows connections from your application
+
+2. **Amazon Aurora**:
+   - A more scalable alternative to RDS, compatible with MySQL
+
+#### Environment Variables on AWS
+
+Make sure to set these environment variables in your AWS environment:
+
+- `DATABASE_URL`: Connection string to your RDS/Aurora database
+- `JWT_SECRET`: Secret key for JWT tokens (use AWS Secrets Manager for production)
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: For Google OAuth
+- `NEXT_PUBLIC_APP_URL`: Your application's public URL
+
+#### Setting Up HTTPS
+
+For production, set up HTTPS using:
+
+1. **AWS Certificate Manager (ACM)** to provision SSL/TLS certificates
+2. **AWS Route 53** for DNS management
+3. **AWS CloudFront** as a CDN and to handle HTTPS termination
+
+#### Monitoring and Logging
+
+Set up:
+
+1. **AWS CloudWatch** for logs and metrics
+2. **AWS X-Ray** for tracing and performance monitoring

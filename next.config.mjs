@@ -19,6 +19,7 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
+  output: "standalone",
 };
 
 mergeConfig(nextConfig, userConfig);
