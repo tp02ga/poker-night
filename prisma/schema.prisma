@@ -15,7 +15,7 @@ model User {
   games     Game[]  @relation("UserGames")
   attendees Attendee[]
   accounts  Account[]
-  image     String?
+  image     String? @db.Text
 
   @@map("users") // Java = @Table("users")
 }
