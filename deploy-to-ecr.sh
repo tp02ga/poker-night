@@ -99,9 +99,9 @@ echo ""
 
 # Step 2: Build Docker image
 echo -e "${BOLD}Step 2: Building Docker image...${NC}"
-echo -e "Running: ${YELLOW}docker build -t ${APP_NAME}:${IMAGE_TAG} .${NC}"
+echo -e "Running: ${YELLOW}docker build -t ${ECR_REPO_URI}:${IMAGE_TAG} .${NC}"
 
-docker build -t ${APP_NAME}:${IMAGE_TAG} .
+docker build -t ${ECR_REPO_URI}:${IMAGE_TAG} .
 
 if [ $? -ne 0 ]; then
   echo -e "\n${BOLD}Error: Docker build failed.${NC}"
@@ -111,19 +111,19 @@ fi
 echo -e "${GREEN}Docker image built successfully!${NC}"
 echo ""
 
-# Step 3: Tag Docker image
-echo -e "${BOLD}Step 3: Tagging Docker image...${NC}"
-echo -e "Running: ${YELLOW}docker tag ${APP_NAME}:${IMAGE_TAG} ${ECR_REPO_URI}:${IMAGE_TAG}${NC}"
+# # Step 3: Tag Docker image
+# echo -e "${BOLD}Step 3: Tagging Docker image...${NC}"
+# echo -e "Running: ${YELLOW}docker tag ${APP_NAME}:${IMAGE_TAG} ${ECR_REPO_URI}:${IMAGE_TAG}${NC}"
 
-docker tag ${APP_NAME}:${IMAGE_TAG} ${ECR_REPO_URI}:${IMAGE_TAG}
+# docker tag ${APP_NAME}:${IMAGE_TAG} ${ECR_REPO_URI}:${IMAGE_TAG}
 
-if [ $? -ne 0 ]; then
-  echo -e "\n${BOLD}Error: Docker tag failed.${NC}"
-  exit 1
-fi
+# if [ $? -ne 0 ]; then
+#   echo -e "\n${BOLD}Error: Docker tag failed.${NC}"
+#   exit 1
+# fi
 
-echo -e "${GREEN}Docker image tagged successfully!${NC}"
-echo ""
+# echo -e "${GREEN}Docker image tagged successfully!${NC}"
+# echo ""
 
 # Step 4: Push Docker image to ECR
 echo -e "${BOLD}Step 4: Pushing Docker image to ECR...${NC}"

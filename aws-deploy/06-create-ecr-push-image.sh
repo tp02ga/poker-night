@@ -22,10 +22,7 @@ echo "Logged in to ECR"
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t $ECR_REPO_NAME .
-
-# Tag Docker image
-docker tag $ECR_REPO_NAME:latest $ECR_REPO_URI:latest
+docker build -t $ECR_REPO_URI:latest .
 
 # Push Docker image to ECR
 echo "Pushing Docker image to ECR..."

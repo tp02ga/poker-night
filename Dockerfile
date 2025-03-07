@@ -1,8 +1,13 @@
 # Use Node 18 as the base image
 FROM node:18-alpine AS base
 
-# Install dependencies needed for Prisma and bcrypt
+# Install dependencies needed for health checks and diagnostics
+RUN apk add --no-cache curl busybox-extras procps
 RUN apk add --no-cache openssl libc6-compat python3 make g++
+
+# Copy the health check script
+COPY container-healthcheck.sh /usr/local/bin/container-healthcheck.sh
+RUN chmod +x /usr/local/bin/container-healthcheck.sh 
 
 # Create app directory
 WORKDIR /app

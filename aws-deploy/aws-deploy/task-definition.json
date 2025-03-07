@@ -53,14 +53,11 @@
       "cpu": 256,
       "memory": 512,
       "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "curl -f -s -m 5 http://localhost:3000/api/health?simple=true || exit 1"
-        ],
+        "command": ["CMD-SHELL", "/usr/local/bin/container-healthcheck.sh"],
         "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
+        "timeout": 10,
+        "retries": 5,
+        "startPeriod": 120
       }
     }
   ],
