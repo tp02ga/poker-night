@@ -1,0 +1,1 @@
+ECR_REPO_URI=050451374718.dkr.ecr.us-east-1.amazonaws.com/poker-night-app

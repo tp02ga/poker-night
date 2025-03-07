@@ -19,6 +19,8 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
+  // Enable standalone output mode for Docker
+  output: "standalone",
 };
 
 mergeConfig(nextConfig, userConfig);

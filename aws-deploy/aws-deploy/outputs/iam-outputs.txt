@@ -1,0 +1,4 @@
+ECS_TASK_EXECUTION_ROLE_ARN=arn:aws:iam::050451374718:role/poker-night-app-ecs-task-execution-role
+SECRETS_POLICY_ARN=arn:aws:iam::050451374718:policy/poker-night-app-secrets-policy
+ECS_TASK_ROLE_ARN=arn:aws:iam::050451374718:role/poker-night-app-ecs-task-role
+LOGS_POLICY_ARN=arn:aws:iam::050451374718:policy/poker-night-app-logs-policy

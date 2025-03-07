@@ -1,0 +1,3 @@
+SERVICE_ARN=
+TASK_DEFINITION_ARN=arn:aws:ecs:us-east-1:050451374718:task-definition/poker-night-app-task:2
+SERVICE_ARN=arn:aws:ecs:us-east-1:050451374718:service/poker-night-app-cluster/poker-night-app-service

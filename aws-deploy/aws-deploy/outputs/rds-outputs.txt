@@ -1,0 +1,3 @@
+RDS_INSTANCE_ID=poker-night-app-db
+RDS_ENDPOINT=poker-night-app-db.cw1e2gugisfd.us-east-1.rds.amazonaws.com
+DATABASE_URL=mysql://admin:my-secret-password@poker-night-app-db.cw1e2gugisfd.us-east-1.rds.amazonaws.com:3306/poker_game_planner

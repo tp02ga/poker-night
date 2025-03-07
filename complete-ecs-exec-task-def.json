@@ -1,0 +1,56 @@
+{
+  "family": "poker-night-app",
+  "executionRoleArn": "arn:aws:iam::050451374718:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::050451374718:role/ecsTaskRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "poker-night-app",
+      "image": "050451374718.dkr.ecr.us-east-1.amazonaws.com/poker-night-app:latest",
+      "essential": true,
+      "linuxParameters": {
+        "initProcessEnabled": true
+      },
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/poker-night-app",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:3000/api/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:050451374718:secret:poker-night-app-env-vars-JgQX8L:DATABASE_URL::"
+        }
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
+}

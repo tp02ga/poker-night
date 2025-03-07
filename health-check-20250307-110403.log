@@ -1,0 +1,24 @@
+[2025-03-07 11:04:04] CHECK #1: FAILURE (301) - Time: s
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+</body>
+</html>
+---
+[2025-03-07 11:04:15] CHECK #2: FAILURE (301) - Time: s
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+</body>
+</html>
+---
+[2025-03-07 11:04:26] CHECK #3: FAILURE (301) - Time: s
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+</body>
+</html>
+---
