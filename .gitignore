@@ -58,3 +58,4 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+aws-deploy/05-create-secrets.sh
