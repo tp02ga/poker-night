@@ -11,9 +11,33 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-// RDS Connection string
-const DATABASE_URL =
-  "mysql://admin:my-secret-password@poker-night-app-db.cw1e2gugisfd.us-east-1.rds.amazonaws.com:3306/poker_game_planner";
+// Get the DATABASE_URL from environment variables or command line arguments
+const getDatabaseUrl = () => {
+  // Check if provided as command line argument
+  const argIndex = process.argv.findIndex((arg) =>
+    arg.startsWith("--database-url=")
+  );
+  if (argIndex !== -1) {
+    return process.argv[argIndex].split("=")[1];
+  }
+
+  // Check if already in environment
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+
+  console.error("Error: DATABASE_URL not provided.");
+  console.error(
+    "Please provide it as an environment variable or command line argument:"
+  );
+  console.error(
+    '  node sync-db.js --database-url="mysql://username:password@hostname:port/database"'
+  );
+  process.exit(1);
+};
+
+// Get the database URL
+const DATABASE_URL = getDatabaseUrl();
 
 // Create a temporary .env file with the DATABASE_URL
 const createTempEnv = () => {

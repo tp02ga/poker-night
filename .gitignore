@@ -31,6 +31,10 @@ yarn-error.log*
 .env.test
 .env.production
 
+# AWS deployment files with sensitive info
+**/env-vars.sh
+aws-deploy/**/env-vars.sh
+
 # vercel
 .vercel
 
@@ -39,3 +43,18 @@ yarn-error.log*
 next-env.d.ts
 
 parameters.json
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc

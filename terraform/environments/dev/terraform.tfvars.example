@@ -1,0 +1,18 @@
+# Example terraform.tfvars file
+# Copy this file to terraform.tfvars and fill in your own values
+
+# Database credentials
+db_password = "your-db-password"
+
+# Application secrets
+jwt_secret = "your-jwt-secret"
+
+# OAuth credentials
+google_client_id = "your-google-client-id"
+google_client_secret = "your-google-client-secret"
+
+# Optional: Override other variables if needed
+# aws_region = "us-east-1"
+# environment = "dev"
+# app_name = "poker-night-app"
+# domain_name = "purely-functional.net" 
