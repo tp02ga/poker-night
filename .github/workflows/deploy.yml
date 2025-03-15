@@ -13,10 +13,10 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: poker-night-app
-  ECS_CLUSTER: poker-night-app-cluster
-  ECS_SERVICE: poker-night-app-service
-  ECS_TASK_FAMILY: poker-night-app-task
+  ECR_REPOSITORY: dev-poker-night-app
+  ECS_CLUSTER: dev-poker-night-app-cluster
+  ECS_SERVICE: dev-poker-night-app-service
+  ECS_TASK_FAMILY: dev-poker-night-app-task
 
 jobs:
   build-and-deploy:
