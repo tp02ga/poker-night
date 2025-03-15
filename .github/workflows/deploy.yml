@@ -16,7 +16,7 @@ env:
   ECR_REPOSITORY: dev-poker-night-app
   ECS_CLUSTER: dev-poker-night-app-cluster
   ECS_SERVICE: dev-poker-night-app-service
-  ECS_TASK_FAMILY: dev-poker-night-app-task
+  ECS_TASK_FAMILY: dev-poker-night-app
 
 jobs:
   build-and-deploy:
