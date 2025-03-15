@@ -7,6 +7,7 @@ This guide explains how to set up the GitHub Actions CI/CD pipeline for the Poke
 1. An AWS account with appropriate permissions
 2. A GitHub repository for your project
 3. AWS ECS cluster, service, and task definition already set up
+4. ECS service configured to use the 'latest' tag for the container image
 
 ## Setting Up AWS Credentials for GitHub Actions
 
@@ -49,13 +50,26 @@ The workflow file (`.github/workflows/deploy.yml`) contains environment variable
 ```yaml
 env:
   AWS_REGION: us-east-1 # Your AWS region
-  ECR_REPOSITORY: poker-night-app # Your ECR repository name
-  ECS_CLUSTER: poker-night-app-cluster # Your ECS cluster name
-  ECS_SERVICE: poker-night-app-service # Your ECS service name
-  ECS_TASK_FAMILY: poker-night-app-task # Your ECS task definition family
+  ECR_REPOSITORY: dev-poker-night-app # Your ECR repository name
+  ECS_CLUSTER: dev-poker-night-app-cluster # Your ECS cluster name
+  ECS_SERVICE: dev-poker-night-app-service # Your ECS service name
+  ECS_TASK_FAMILY: dev-poker-night-app # Your ECS task definition family
 ```
 
 Update these values to match your AWS environment.
+
+## ECS Service Configuration
+
+For this deployment approach to work, your ECS service should be configured to:
+
+1. Use the 'latest' tag for the container image
+2. Have a task definition that references the ECR repository with the 'latest' tag
+
+When the GitHub Actions workflow runs, it will:
+
+1. Build and push a new image to ECR with the 'latest' tag
+2. Force a new deployment of the ECS service
+3. The ECS service will automatically use the new 'latest' image
 
 ## Triggering the Workflow
 
@@ -76,3 +90,4 @@ If the workflow fails, check the following:
 2. Ensure that the environment variables in the workflow match your AWS resources
 3. Check the GitHub Actions logs for specific error messages
 4. Verify that the AWS credentials are correctly stored as GitHub secrets
+5. Confirm that your ECS service is configured to use the 'latest' tag

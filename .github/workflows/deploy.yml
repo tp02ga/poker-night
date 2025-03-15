@@ -55,37 +55,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Get current task definition
-        id: task-def
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_FAMILY }} --query taskDefinition > task-definition.json
-          echo "task-def-file=task-definition.json" >> $GITHUB_OUTPUT
-
-      - name: Update task definition with new image
-        id: update-task-def
-        run: |
-          # Get the container name from the task definition
-          CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' task-definition.json)
-
-          # Update the image in the task definition
-          jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" \
-             '.containerDefinitions[0].image = $IMAGE' task-definition.json > updated-task-definition.json
-
-          echo "container-name=$CONTAINER_NAME" >> $GITHUB_OUTPUT
-          echo "updated-task-def-file=updated-task-definition.json" >> $GITHUB_OUTPUT
-
-      - name: Register new task definition
-        id: register-task-def
-        run: |
-          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://updated-task-definition.json --query 'taskDefinition.taskDefinitionArn' --output text)
-          echo "task-def-arn=$NEW_TASK_DEF_ARN" >> $GITHUB_OUTPUT
-
-      - name: Deploy to Amazon ECS
+      - name: Force new deployment with latest task definition
         run: |
           aws ecs update-service \
             --cluster ${{ env.ECS_CLUSTER }} \
             --service ${{ env.ECS_SERVICE }} \
-            --task-definition ${{ steps.register-task-def.outputs.task-def-arn }} \
             --force-new-deployment
 
       - name: Wait for service to stabilize

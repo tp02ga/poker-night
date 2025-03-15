@@ -15,8 +15,7 @@ The CI/CD pipeline consists of two main workflows:
 2. **Deploy Workflow** (`.github/workflows/deploy.yml`)
    - Triggered after successful test workflow, on push to main, or manual trigger
    - Builds a Docker image and pushes it to Amazon ECR
-   - Updates the ECS task definition with the new image
-   - Deploys the updated task definition to ECS
+   - Forces a new deployment of the ECS service using the existing task definition
    - Waits for the service to stabilize
 
 ## Workflow Diagram
@@ -51,6 +50,16 @@ The deployment workflow uses the following environment variables:
 - `ECS_TASK_FAMILY`: The family name of your ECS task definition
 
 These variables are defined in the workflow file and can be customized as needed.
+
+## Deployment Approach
+
+This pipeline uses a simplified deployment approach:
+
+1. It builds and pushes a new Docker image to ECR with both the commit SHA and 'latest' tags
+2. It forces a new deployment of the ECS service, which will use the existing task definition
+3. The ECS service is configured to automatically pull the 'latest' image when deploying
+
+This approach relies on your ECS service being configured to use the 'latest' tag for the container image.
 
 ## Manual Deployment
 

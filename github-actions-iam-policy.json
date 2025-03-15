@@ -18,35 +18,17 @@
     {
       "Effect": "Allow",
       "Action": ["ecr:DescribeRepositories", "ecr:ListImages"],
-      "Resource": "arn:aws:ecr:*:*:repository/poker-night-app"
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["ecs:DescribeTaskDefinition", "ecs:RegisterTaskDefinition"],
-      "Resource": "*"
+      "Resource": "arn:aws:ecr:*:*:repository/dev-poker-night-app"
     },
     {
       "Effect": "Allow",
       "Action": ["ecs:DescribeServices", "ecs:UpdateService"],
-      "Resource": "arn:aws:ecs:*:*:service/poker-night-app-cluster/poker-night-app-service"
+      "Resource": "arn:aws:ecs:*:*:service/dev-poker-night-app-cluster/dev-poker-night-app-service"
     },
     {
       "Effect": "Allow",
       "Action": ["ecs:DescribeClusters"],
-      "Resource": "arn:aws:ecs:*:*:cluster/poker-night-app-cluster"
-    },
-    {
-      "Effect": "Allow",
-      "Action": ["iam:PassRole"],
-      "Resource": [
-        "arn:aws:iam::*:role/ecsTaskExecutionRole",
-        "arn:aws:iam::*:role/poker-night-app-task-role"
-      ],
-      "Condition": {
-        "StringLike": {
-          "iam:PassedToService": "ecs-tasks.amazonaws.com"
-        }
-      }
+      "Resource": "arn:aws:ecs:*:*:cluster/dev-poker-night-app-cluster"
     }
   ]
 }
