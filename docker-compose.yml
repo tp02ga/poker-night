@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://root:root@db:3306/poker_game_planner
+      - DATABASE_URL=mysql://example_user:example_password@db:3306/poker_game_planner
       - NODE_ENV=production
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -23,7 +23,7 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=example_password
       - MYSQL_DATABASE=poker_game_planner
     volumes:
       - mysql-data:/var/lib/mysql
