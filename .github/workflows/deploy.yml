@@ -17,6 +17,7 @@ env:
   ECS_CLUSTER: dev-poker-night-app-cluster
   ECS_SERVICE: dev-poker-night-app-service
   ECS_TASK_FAMILY: dev-poker-night-app
+  SECRETS_NAME: dev-poker-night-app-environment-vars
 
 jobs:
   build-and-deploy:
@@ -54,14 +55,33 @@ jobs:
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }},${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            MYSQL_USER=${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+
+      # Update secrets in AWS Secrets Manager if needed
+      - name: Update secrets in AWS Secrets Manager
+        run: |
+          # Get current secret value
+          CURRENT_SECRET=$(aws secretsmanager get-secret-value --secret-id "${SECRETS_NAME}" --query 'SecretString' --output text)
+
+          # Create a JSON object with updated values
+          UPDATED_SECRET=$(echo $CURRENT_SECRET | jq \
+            --arg db_url "${{ secrets.DATABASE_URL }}" \
+            --arg jwt "${{ secrets.JWT_SECRET }}" \
+            --arg g_id "${{ secrets.GOOGLE_CLIENT_ID }}" \
+            --arg g_secret "${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            --arg app_url "${{ secrets.NEXT_PUBLIC_APP_URL }}" \
+            '. + {
+              "DATABASE_URL": $db_url,
+              "JWT_SECRET": $jwt,
+              "GOOGLE_CLIENT_ID": $g_id,
+              "GOOGLE_CLIENT_SECRET": $g_secret,
+              "NEXT_PUBLIC_APP_URL": $app_url
+            }')
+
+          # Update the secret
+          aws secretsmanager update-secret \
+            --secret-id "${SECRETS_NAME}" \
+            --secret-string "$UPDATED_SECRET" \
+            --region ${{ env.AWS_REGION }}
 
       - name: Force new deployment with latest task definition
         run: |

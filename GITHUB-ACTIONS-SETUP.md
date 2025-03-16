@@ -8,6 +8,7 @@ This guide explains how to set up the GitHub Actions CI/CD pipeline for the Poke
 2. A GitHub repository for your project
 3. AWS ECS cluster, service, and task definition already set up
 4. ECS service configured to use the 'latest' tag for the container image
+5. AWS Secrets Manager secret already configured in your task definition
 
 ## Setting Up AWS Credentials for GitHub Actions
 
@@ -43,19 +44,17 @@ GitHub Actions needs permissions to interact with AWS services. We'll use AWS ac
    - Value: The Secret Access Key from the IAM user you created
 7. Click "Add secret"
 
-### 3. Add Database and Application Secrets
+### 3. Add Application Secrets
 
 Add the following additional secrets for your application:
 
-1. `MYSQL_USER`: Database username
-2. `MYSQL_PASSWORD`: Database password
-3. `MYSQL_ROOT_PASSWORD`: MySQL root password
-4. `JWT_SECRET`: Secret key for JWT authentication
-5. `GOOGLE_CLIENT_ID`: Google OAuth client ID (if used)
-6. `GOOGLE_CLIENT_SECRET`: Google OAuth client secret (if used)
-7. `NEXT_PUBLIC_APP_URL`: Public URL of your application
+1. `DATABASE_URL`: Complete database connection string
+2. `JWT_SECRET`: Secret key for JWT authentication
+3. `GOOGLE_CLIENT_ID`: Google OAuth client ID (if used)
+4. `GOOGLE_CLIENT_SECRET`: Google OAuth client secret (if used)
+5. `NEXT_PUBLIC_APP_URL`: Public URL of your application
 
-These secrets will be passed as build arguments to Docker during the build process.
+These secrets will be updated in AWS Secrets Manager during the CI/CD process to match your GitHub secrets.
 
 ## Customizing the Workflow
 
@@ -68,41 +67,33 @@ env:
   ECS_CLUSTER: dev-poker-night-app-cluster # Your ECS cluster name
   ECS_SERVICE: dev-poker-night-app-service # Your ECS service name
   ECS_TASK_FAMILY: dev-poker-night-app # Your ECS task definition family
+  SECRETS_NAME: dev-poker-night-app-environment-vars # Your Secrets Manager secret name
 ```
 
 Update these values to match your AWS environment.
 
 ## ECS Service Configuration
 
-For this deployment approach to work, your ECS service should be configured to:
+Your ECS service is already configured to:
 
 1. Use the 'latest' tag for the container image
-2. Have a task definition that references the ECR repository with the 'latest' tag
+2. Reference secrets from AWS Secrets Manager in the task definition
 
-When the GitHub Actions workflow runs, it will:
+The CI/CD pipeline will:
 
 1. Build and push a new image to ECR with the 'latest' tag
-2. Force a new deployment of the ECS service
-3. The ECS service will automatically use the new 'latest' image
+2. Update the secrets in AWS Secrets Manager with values from GitHub secrets
+3. Force a new deployment of the ECS service
+4. The ECS service will automatically use the new 'latest' image and updated secrets
 
-## Environment Variables in ECS Task Definition
+## Secure Secrets Management
 
-Make sure your ECS task definition includes the necessary environment variables for your application. You can set these in the task definition's container definition:
+This setup maintains a secure approach for handling sensitive information:
 
-```json
-"environment": [
-  { "name": "MYSQL_USER", "value": "your_db_username" },
-  { "name": "MYSQL_PASSWORD", "value": "your_db_password" },
-  { "name": "MYSQL_ROOT_PASSWORD", "value": "your_root_password" },
-  { "name": "JWT_SECRET", "value": "your_jwt_secret" },
-  { "name": "GOOGLE_CLIENT_ID", "value": "your_google_client_id" },
-  { "name": "GOOGLE_CLIENT_SECRET", "value": "your_google_client_secret" },
-  { "name": "NEXT_PUBLIC_APP_URL", "value": "your_app_url" },
-  { "name": "DATABASE_URL", "value": "mysql://your_db_username:your_db_password@your_db_host:3306/poker_game_planner" }
-]
-```
-
-For sensitive values, consider using AWS Secrets Manager and reference them in your task definition.
+1. Secrets are stored in GitHub Actions secrets for the CI/CD process
+2. During deployment, secrets are updated in AWS Secrets Manager
+3. The ECS task definition references secrets from AWS Secrets Manager
+4. No sensitive information is stored in Docker images or environment variables
 
 ## Triggering the Workflow
 
@@ -124,4 +115,4 @@ If the workflow fails, check the following:
 3. Check the GitHub Actions logs for specific error messages
 4. Verify that the AWS credentials are correctly stored as GitHub secrets
 5. Confirm that your ECS service is configured to use the 'latest' tag
-6. Ensure all required environment variables are properly set in both GitHub secrets and ECS task definition
+6. Ensure the Secrets Manager secret name is correct

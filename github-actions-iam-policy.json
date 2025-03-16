@@ -29,6 +29,16 @@
       "Effect": "Allow",
       "Action": ["ecs:DescribeClusters"],
       "Resource": "arn:aws:ecs:*:*:cluster/dev-poker-night-app-cluster"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:UpdateSecret"
+      ],
+      "Resource": [
+        "arn:aws:secretsmanager:*:*:secret:dev-poker-night-app-environment-vars*"
+      ]
     }
   ]
 }
