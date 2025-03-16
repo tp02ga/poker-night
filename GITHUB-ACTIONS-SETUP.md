@@ -43,6 +43,20 @@ GitHub Actions needs permissions to interact with AWS services. We'll use AWS ac
    - Value: The Secret Access Key from the IAM user you created
 7. Click "Add secret"
 
+### 3. Add Database and Application Secrets
+
+Add the following additional secrets for your application:
+
+1. `MYSQL_USER`: Database username
+2. `MYSQL_PASSWORD`: Database password
+3. `MYSQL_ROOT_PASSWORD`: MySQL root password
+4. `JWT_SECRET`: Secret key for JWT authentication
+5. `GOOGLE_CLIENT_ID`: Google OAuth client ID (if used)
+6. `GOOGLE_CLIENT_SECRET`: Google OAuth client secret (if used)
+7. `NEXT_PUBLIC_APP_URL`: Public URL of your application
+
+These secrets will be passed as build arguments to Docker during the build process.
+
 ## Customizing the Workflow
 
 The workflow file (`.github/workflows/deploy.yml`) contains environment variables that you may need to customize:
@@ -71,6 +85,25 @@ When the GitHub Actions workflow runs, it will:
 2. Force a new deployment of the ECS service
 3. The ECS service will automatically use the new 'latest' image
 
+## Environment Variables in ECS Task Definition
+
+Make sure your ECS task definition includes the necessary environment variables for your application. You can set these in the task definition's container definition:
+
+```json
+"environment": [
+  { "name": "MYSQL_USER", "value": "your_db_username" },
+  { "name": "MYSQL_PASSWORD", "value": "your_db_password" },
+  { "name": "MYSQL_ROOT_PASSWORD", "value": "your_root_password" },
+  { "name": "JWT_SECRET", "value": "your_jwt_secret" },
+  { "name": "GOOGLE_CLIENT_ID", "value": "your_google_client_id" },
+  { "name": "GOOGLE_CLIENT_SECRET", "value": "your_google_client_secret" },
+  { "name": "NEXT_PUBLIC_APP_URL", "value": "your_app_url" },
+  { "name": "DATABASE_URL", "value": "mysql://your_db_username:your_db_password@your_db_host:3306/poker_game_planner" }
+]
+```
+
+For sensitive values, consider using AWS Secrets Manager and reference them in your task definition.
+
 ## Triggering the Workflow
 
 The workflow is configured to run automatically when:
@@ -91,3 +124,4 @@ If the workflow fails, check the following:
 3. Check the GitHub Actions logs for specific error messages
 4. Verify that the AWS credentials are correctly stored as GitHub secrets
 5. Confirm that your ECS service is configured to use the 'latest' tag
+6. Ensure all required environment variables are properly set in both GitHub secrets and ECS task definition
