@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Check if user exists and has a password (might not if they only use OAuth)
-    if (!user || !user.password) {
+    if (!user?.password) {
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
